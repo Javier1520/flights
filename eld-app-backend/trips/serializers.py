@@ -17,7 +17,7 @@ class TripSerializer(serializers.ModelSerializer):
         model = Trip
         fields = [
             'id', 'current_location', 'pickup_location',
-            'dropoff_location', 'current_cycle_used', 'start_time',
+            'dropoff_location', 'current_cycle_hours', 'start_time',
             'total_distance', 'status', 'stops', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'total_distance', 'created_at', 'updated_at']
@@ -35,13 +35,14 @@ class TripCreateSerializer(serializers.ModelSerializer):
         model = Trip
         fields = [
             'current_location', 'pickup_location',
-            'dropoff_location', 'current_cycle_used'
+            'dropoff_location', 'current_cycle_hours', 'start_time',
+            'status'
         ]
 
     def validate(self, data):
         """
-        Validate that the current_cycle_used is within the allowed range (0-70 hours)
+        Validate that the current_cycle_hours is within the allowed range (0-70 hours)
         """
-        if data['current_cycle_used'] < 0 or data['current_cycle_used'] > 70:
-            raise serializers.ValidationError("Current cycle used must be between 0 and 70 hours")
+        if 'current_cycle_hours' in data and (data['current_cycle_hours'] < 0 or data['current_cycle_hours'] > 70):
+            raise serializers.ValidationError("Current cycle hours must be between 0 and 70 hours")
         return data
